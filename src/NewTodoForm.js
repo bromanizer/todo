@@ -1,31 +1,36 @@
-import React, { Component } from 'react';
-import Todo from './Todo';
+import React, { Component } from "react";
+import Todo from "./Todo";
 
 class NewTodoForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { todo: "" };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
 
-    constructor(props){
-        super(props);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+  handleSubmit(event) {
+    event.preventDefault();
+    this.props.addTodo(this.state.todo);
+  }
 
-    handleSubmit(text) {
-        this.props.addTodo(text);
-    }
+  handleChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  }
 
-    render() {
-        return (
-            <div>
-                {this.props.list.map(item => {
-                    <input type="number"></input>
-                })}
-                <form onSubmit={this.handleSubmit}>
-                    <input type="text"></input>
-                    <button type="submit">Add Todo</button>
-                </form>
-            </div>
-        )
-    }
-
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label htmlFor="todo">
+          Your new item: 
+          <input id="todo" name="todo" value={this.state.todo} type="text" onChange={this.handleChange}/>
+        </label>
+        <button>Add Item</button>
+      </form>
+    );
+  }
 }
 
 export default NewTodoForm;
