@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import NewTodoForm from "./NewTodoForm";
 import Todo from "./Todo";
 import './todolist.css';
-import { v4 as uuidv4 } from "uuid";
 
 class ToDoList extends Component {
   constructor(props) {
@@ -16,44 +15,41 @@ class ToDoList extends Component {
   }
 
   addTodo(newTodo) {
-    const unique = `${newTodo}-${uuidv4()}`;
-    this.setState((state) => ({
-      todos: [
-        ...state.todos,
-        <Todo
-          content={newTodo}
-          id={unique}
-          key={unique}
-          deleteTodo={this.deleteTodo}
-          editTodo={this.editTodo}
-        ></Todo>,
-      ],
-    }));
+    this.setState({
+      todos: [...this.state.todos, newTodo]
+    });
   }
 
   deleteTodo(id) {
     this.setState({
-      todos: this.state.todos.filter((todo) => todo.key !== id),
+      todos: this.state.todos.filter((todo) => todo.id !== id),
     });
   }
 
   editTodo(id, newContent) {
     const updatedTodos = this.state.todos.map((item) => {
-      if (item.key === id) {
-        console.log(newContent);
-        let newItem = Object.assign({}, item);
-        newItem.content = newContent;
-        return newItem;
+      if (item.id === id) {
+        return { ...item, task: newContent };
       }
       return item;
     });
-    updatedTodos.forEach(todo => console.log(todo));
     this.setState({
       todos: updatedTodos,
     });
   }
 
   render() {
+    const todos = this.state.todos.map(todo => {
+      return (
+        <Todo
+          key={todo.id}
+          id={todo.id}
+          task={todo.task}
+          deleteTodo={this.deleteTodo}
+          editTodo={this.editTodo} 
+        />
+      );
+    })
     return (
       <div>
         <h1>ToDo List</h1>
@@ -61,14 +57,9 @@ class ToDoList extends Component {
         <hr></hr>
         <NewTodoForm
           addTodo={this.addTodo}
-          deleteTodo={this.deleteTodo}
         ></NewTodoForm>
         <ul>
-          {this.state.todos.map((item) => (
-            <li id={item.id} key={item.key} content={item.content}>
-              {item}
-            </li>
-          ))}
+          {todos}
         </ul>
       </div>
     );
